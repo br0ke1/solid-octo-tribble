@@ -1,0 +1,9 @@
+name: My Workflow
+on: push
+jobs:
+  myjob:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: just a simple ls command
+        run: ls -la
