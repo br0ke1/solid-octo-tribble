@@ -1,4 +1,4 @@
-name: My Workflow
+name: My Workflow LS Test
 on: push
 jobs:
   myjob:
