@@ -44,4 +44,4 @@ jobs:
         subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: RG_PolicyTest
         template: ./storageaccount.bicep
-        parameters: ./storageaccount-Test.parameters.json
+        parameters: ./storageaccount-Test.parameters.bicepparam
