@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus"
+        },
+        "resourceGroup": {
+            "value": "RG_PolicyTest"
+        },
+        "bastionHostName": {
+            "value": "bastion-std-eastus"
+        },
+        "bastionHostSku": {
+            "value": "Standard"
+        },
+        "bastionHostScaleUnits": {
+            "value": 2
+        },
+        "enableIpConnect": {
+            "value": true
+        },
+        "enableTunneling": {
+            "value": true
+        },
+        "enableShareableLink": {
+            "value": true
+        },
+        "subnetId": {
+            "value": "/subscriptions/4fc8cc73-1ff5-430f-a7a3-7015c2d26a46/resourceGroups/RG_PolicyTest/providers/Microsoft.Network/virtualNetworks/vnet-eastus/subnets/AzureBastionSubnet"
+        },
+        "enableKerberos": {
+            "value": false
+        },
+        "disableCopyPaste": {
+            "value": false
+        },
+        "enableSessionRecording": {
+            "value": false
+        },
+        "enablePrivateOnlyBastion": {
+            "value": false
+        },
+        "zones": {
+            "value": [
+                "1",
+                "2",
+                "3"
+            ]
+        },
+        "publicIpZones": {
+            "value": [
+                "2",
+                "1",
+                "3"
+            ]
+        },
+        "publicIpAddressName": {
+            "value": "PIP-bastion-eastus"
+        }
+    }
+}
