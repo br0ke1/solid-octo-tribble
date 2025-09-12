@@ -8,11 +8,15 @@ $ParameterFile="bastion_PIP_parameters.json"
 az deployment group create --name deployBastion --resource-group RG_PolicyTest --template-file $templateFile --parameters $ParameterFile
 
 #2 ways to connect
-#HTML5 VM->Connect->Connect->Request JIT, make sure bastion IP is used
-#Native RDP client, must use Azure CLI, only have to use --configure once for settings to stick(disable multi-monitor)
-AZ login
-az network bastion rdp --name "bastion-std-eastus" --resource-group "RG_PolicyTest" --target-resource-id "/subscriptions/4fc8cc73-1ff5-430f-a7a3-7015c2d26a46/resourceGroups/RG_PolicyTest/providers/Microsoft.Compute/virtualMachines/VM2022test" --configure
-az network bastion rdp --name "bastion-std-eastus" --resource-group "RG_PolicyTest" --target-ip-address "172.16.0.5" --configure
+#HTML5 VM->Connect->Connect->Request JIT, make sure bastion IP is used, cannot use Entra account for Entra joined from portal
+#Native RDP client, must use Azure CLI, only have to use --configure once for settings to stick(disable multi-monitor) --auth-type AAD for Entra account
+#AZ login
+#dsregcmd /status
+
+az network bastion rdp --name "bastion-std-eastus" --resource-group "RG_PolicyTest" --target-resource-id "/subscriptions/4fc8cc73-1ff5-430f-a7a3-7015c2d26a46/resourceGroups/RG_PolicyTest/providers/Microsoft.Compute/virtualMachines/VM2022test" --configure --auth-type AAD
+az network bastion rdp --name "bastion-std-eastus" --resource-group "RG_PolicyTest" --target-ip-address "172.16.0.5" --configure --auth-type AAD
+#Edit/Save RDP file from here
+C:\Users\<username>\AppData\Local\Temp
 
 #Azure user permissions for VM
 #global variables
@@ -63,11 +67,22 @@ az role assignment delete --assignee $assignee --role "Custom JIT" --scope $JITS
 az role assignment delete --assignee $assignee --role "Custom Watcher Write" --scope $NetworkWatcherScope
 
 #RDS
+#Entra login extension, can download Azure CLI MSI instead of PoSH
+$progressPreference = 'silentlyContinue'
+Write-Host "Installing WinGet PowerShell module from PSGallery..."
+Install-PackageProvider -Name NuGet -Force | Out-Null
+Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
+Write-Host "Done."
+
+winget install --exact --id Microsoft.AzureCLI
+az vm extension set --publisher Microsoft.Azure.ActiveDirectory --name AADLoginForWindows --resource-group RG_PolicyTest --vm-name VM2022test
+#Install RDS role
 Install-WindowsFeature -Name RDS-Licensing, RDS-RD-Server –IncludeManagementTools
 Get-WindowsFeature -Name RDS* | Where installed
 #Set GPO, used EA 4965437
+Computer Configuration -> Policies -> Admin Templates -> Windows Components -> Remote Desktop Services -> Remote Desktop Session Host -> Licensing
 Use the specified Remote Desktop license servers: Localhost
-Set the Remote Desktop licensing mode: Device
+Set the Remote Desktop licensing mode: Per-Device
 
 #Check licensing
 $obj = gwmi -namespace "Root/CIMV2/TerminalServices" Win32_TerminalServiceSetting
